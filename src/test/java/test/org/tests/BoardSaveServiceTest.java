@@ -23,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @DisplayName("게시글 저장 서비스 테스트")
-@Transactional
+@Transactional // 테스트시에는 추가된 데이터를 다시 롤백
 public class BoardSaveServiceTest {
 
     @Autowired
@@ -52,7 +52,7 @@ public class BoardSaveServiceTest {
     }
 
     @Test
-    @DisplayName("작성,수정 성공시 예외가 발생하지 않음")
+    @DisplayName("게시글 작성,수정 성공시 예외가 발생하지 않음")
     void saveSuccessTest() {
         assertDoesNotThrow(() -> {
             saveService.save(boardData);
@@ -65,31 +65,37 @@ public class BoardSaveServiceTest {
 
         assertAll(
                 () -> {
+                    // poster가 null
                     boardData = getData();
                     boardData.setPoster(null);
                     requiredFieldTestEach(boardData, "작성자");
                 },
                 () -> {
+                    // poster가 빈값
                     boardData = getData();
                     boardData.setPoster("     ");
                     requiredFieldTestEach(boardData, "작성자");
                 },
                 () -> {
+                    // subject가 null
                     boardData = getData();
                     boardData.setSubject(null);
                     requiredFieldTestEach(boardData, "제목");
                 },
                 () -> {
+                    // subject가 빈값
                     boardData = getData();
                     boardData.setSubject("     ");
                     requiredFieldTestEach(boardData, "제목");
                 },
                 () -> {
+                    // content가 null
                     boardData = getData();
                     boardData.setContent(null);
                     requiredFieldTestEach(boardData, "내용");
                 },
                 () -> {
+                    // content가 빈값
                     boardData = getData();
                     boardData.setContent("    ");
                     requiredFieldTestEach(boardData, "내용");
