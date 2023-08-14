@@ -9,14 +9,18 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.WebApplicationContext;
 import test.org.models.board.BoardData;
+import test.org.models.board.BoardDataDao;
 import test.org.models.board.InfoService;
 import test.org.models.board.SaveService;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("/board")
 @RequiredArgsConstructor
 public class BoardController {
 
+    private final BoardDataDao boardDataDao;
     private final SaveService saveService;
     private final InfoService infoService;
 
@@ -27,6 +31,13 @@ public class BoardController {
 
         return "board/write";
     }
+
+    /*@GetMapping("/list")
+    public String list(@ModelAttribute BoardDataForm data) {
+
+        return "board/list";
+    }*/
+
     @PostMapping("/save")
     public String save(@Valid BoardDataForm data, Errors errors) {
 
@@ -58,5 +69,14 @@ public class BoardController {
         e.printStackTrace();
 
         return "commons/execute_script";
+    }
+
+
+
+    @GetMapping("/list")
+    public String showBoardList(Model model) {
+        List<BoardData> boardList = boardDataDao.getAll();
+        model.addAttribute("list", boardList);
+        return "board/list"; // Thymeleaf 템플릿의 경로
     }
 }

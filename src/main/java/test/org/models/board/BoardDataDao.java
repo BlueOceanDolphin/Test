@@ -1,20 +1,26 @@
 package test.org.models.board;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Repository;
 import test.org.controllers.board.BoardDataForm;
+//import test.org.scheduling.PostService;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.List;
+import java.util.Map;
 
 @Repository
 @RequiredArgsConstructor
 public class BoardDataDao {
+    // private final PostService postService;
     private final JdbcTemplate jdbcTemplate;
 
     public boolean save(BoardDataForm data) {
@@ -62,6 +68,11 @@ public class BoardDataDao {
         }
     }
 
+    public List<BoardData> getAll() {
+        String sql = "SELECT * FROM TEST_BOARD";
+        return jdbcTemplate.query(sql, this::mapper);
+    }
+
     public BoardData mapper(ResultSet rs, int i) throws SQLException {
         Timestamp modDt = rs.getTimestamp("MODDT");
         return BoardData.builder()
@@ -73,4 +84,9 @@ public class BoardDataDao {
                 .modDt(modDt == null ? null : modDt.toLocalDateTime())
                 .build();
     }
+    /*public int getPostCountByHour(int hour) {
+        String sql = "SELECT COUNT(*) FROM TEST_BOARD WHERE EXTRACT(HOUR FROM REGDT) = ?";
+        return jdbcTemplate.queryForObject(sql, Integer.class, hour);
+    }*/
+
 }
